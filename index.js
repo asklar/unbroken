@@ -3,7 +3,7 @@ const commandLineUsage = require("command-line-usage");
 const unbroken = require('./unbroken');
 const fs = require('fs');
 
-function Do() {
+async function Do() {
 
   const options = commandLineArgs(unbroken.Checker.optionDefinitions);
 
@@ -25,7 +25,7 @@ function Do() {
       process.exit(0);
     }
   }
-  process.exitCode = unbroken.unbroken(options);
+  process.exitCode = await unbroken.unbroken(options);
 }
 
 Do();
