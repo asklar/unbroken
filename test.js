@@ -18,11 +18,15 @@ const TestCases = [
 async function Test() {
     console.log();
     for (var i = 0; i < TestCases.length; i++) {
-        process.stdout.write(TestCases[i].name + ' ');
-        // console.log('foo');
-        const v = await unbroken.unbroken(TestCases[i].options);
-        if (AssertAreEqual(TestCases[i].expected, v, TestCases[i].name)) {
-            console.log(TestCases[i].name, chalk.greenBright('ok'));
+        try {
+            process.stdout.write(TestCases[i].name + ' ');
+            // console.log('foo');
+            const v = await unbroken.unbroken(TestCases[i].options);
+            if (AssertAreEqual(TestCases[i].expected, v, TestCases[i].name)) {
+                console.log(TestCases[i].name, chalk.greenBright('ok'));
+            }
+        } catch (e) {
+            console.error(e);
         }
     }
 }

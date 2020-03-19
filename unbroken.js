@@ -61,9 +61,8 @@ class Checker {
         dirPath = this.options.dir || '.';
     }
     await this.RecurseFindMarkdownFiles(dirPath);
-    process.stdout.clearLine();
-    process.stdout.cursorTo(0);
-  
+        process.stdout.clearLine();
+        process.stdout.cursorTo(0);
     let n = 0;
     this.errors.forEach(err => {
           if (this.suppressions.indexOf(err) >= 0) {
@@ -129,9 +128,6 @@ class Checker {
   }
 
   async VerifyMarkDownFile(filePath) {
-  //   process.stdout.clearLine();
-  //   process.stdout.cursorTo(0);
-  //   process.stdout.write(`Verifying ${filePath}`);
     this.log(`Verifying ${filePath}`);
     const contents = fs.readFileSync(filePath).toString();
     // a bracket, but make sure it's followed by an even number of code quotes (`) and then non-code quotes,
