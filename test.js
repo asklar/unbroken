@@ -26,7 +26,7 @@ async function Test() {
                 console.log(TestCases[i].name, chalk.greenBright('ok'));
             }
         } catch (e) {
-            console.log('ERROR:', e);
+            console.log('##error', e);
         }
     }
 }
