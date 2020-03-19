@@ -27,7 +27,7 @@ async function Test() {
             }
         } catch (e) {
             console.log();
-            console.log('##error', e);
+            console.error('##error', e);
         }
     }
 }
