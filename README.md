@@ -9,10 +9,10 @@ The exit code represents the number of errors detected so you can use it e.g. in
 #### Options
 ```
   -e, --exclusions <file>   The exclusions file. Default is .unbroken_exclusions
-  -l, --local-only
+  -l, --local-only          Do not test http and https links
   -d, --dir <directory>     The directory to crawl
-  -?, --help
   -q, --quiet
+  -?, --help
 ```
   Project home: [https://github.com/asklar/unbroken](https://github.com/asklar/unbroken)
 
