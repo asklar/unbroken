@@ -1,0 +1,15 @@
+{
+  "name": "unbroken",
+  "version": "1.0.0",
+  "description": "Detect broken links in markdown files",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alexander Sklar",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^3.0.0",
+    "node-fetch": "^2.6.0"
+  }
+}
