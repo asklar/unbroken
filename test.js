@@ -17,6 +17,7 @@ const TestCases = [
 
 async function Test() {
     console.log();
+    let nErrors = 0;
     for (var i = 0; i < TestCases.length; i++) {
         try {
             process.stdout.write(TestCases[i].name + ' ');
@@ -26,10 +27,11 @@ async function Test() {
                 console.log(TestCases[i].name, chalk.greenBright('ok'));
             }
         } catch (e) {
-            console.log();
-            console.error('##error', e);
+            console.error(e);
+            nErrors++;
         }
     }
+    process.exitCode = nErrors;
 }
 
 Test();
