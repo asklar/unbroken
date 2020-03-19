@@ -107,10 +107,9 @@ class Checker {
     let extra = '';
     if (page != '') {
         // console.log(`Validating anchor in different page: ${page} ${textToFind} referenced in ${filePath}`);
-        extra = ` parsing ${filePath}`;
-        const oldFilePath = filePath;
-        filePath = path.join(path.dirname(filePath), page);
-        if (this.ValidateFile(name, page, oldFilePath)) {
+        extra = ` while parsing ${filePath}`;
+        if (this.ValidateFile(name, page, filePath)) {
+            filePath = path.join(path.dirname(filePath), page);
             contents = fs.readFileSync(filePath).toString();
         } else {
             // file doesn't exist. We've already logged that the file is missing, don't log that the section is missing too.
