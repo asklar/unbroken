@@ -28,8 +28,10 @@ async function Test() {
     let nErrors = 0;
     for (var i = 0; i < TestCases.length; i++) {
         try {
-            process.stdout.write(TestCases[i].name + ' ');
-            process.stdout.cursorTo(0);
+            if (!process.env.CI) {
+                process.stdout.write(TestCases[i].name + ' ');
+                process.stdout.cursorTo(0);
+            }
             // console.log('foo');
             const v = await unbroken.unbroken(TestCases[i].options);
             if (AssertAreEqual(TestCases[i].expected, v, TestCases[i].name)) {
