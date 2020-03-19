@@ -61,8 +61,6 @@ class Checker {
         dirPath = this.options.dir || '.';
     }
     await this.RecurseFindMarkdownFiles(dirPath);
-        process.stdout.clearLine();
-        process.stdout.cursorTo(0);
     let n = 0;
     this.errors.forEach(err => {
           if (this.suppressions.indexOf(err) >= 0) {
