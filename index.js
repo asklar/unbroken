@@ -2,6 +2,7 @@ const commandLineArgs = require("command-line-args");
 const commandLineUsage = require("command-line-usage");
 const unbroken = require('./unbroken');
 const fs = require('fs');
+const chalk = require('chalk');
 
 async function Do() {
 
