@@ -89,7 +89,7 @@ class Checker {
     const dir = path.dirname(filePath);
     const pathToCheck = path.join(dir, value);
     if (!fs.existsSync(pathToCheck)) {
-      const pathToCheckReplaced = path.join(dir, value.replace("_", "-")); // This isn't perfect as you could have a file named a_b-c
+      const pathToCheckReplaced = path.join(dir, value.replace(/_/g, '-')); // This isn't perfect as you could have a file named a_b-c
       if (!fs.existsSync(pathToCheckReplaced)) {
         this.errors.push(`File not found ${value} while parsing ${filePath}`);
         return false;
@@ -98,12 +98,23 @@ class Checker {
     return true;
   }
   
+  getAnchors(content) {
+    const anchorRegex = /\n\#+\s*(?<anchorTitle>.*)/g;
+    let anchors = [];
+    const results = content.matchAll(anchorRegex);
+    for (let result of results) {
+        const title = result.groups.anchorTitle;
+        const transformed = title.replace(/[^\w\d\s-.]+/g, '').replace(/ /g, '-');
+        // this is missing the functionality to append -1, -2, -3 etc. in case the transformed anchor isn't unique
+        anchors.push(transformed);
+    }
+    return anchors;
+  }
   
   ValidateSection(name, value, contents, filePath) {
     const hash = value.indexOf('#');
     const sectionAnchor = value.substring(hash + 1);
     const page = value.substring(0, hash);
-    const textToFind = sectionAnchor.replace(/-/g, ' ');
     let extra = '';
     if (page != '') {
         // console.log(`Validating anchor in different page: ${page} ${textToFind} referenced in ${filePath}`);
@@ -116,14 +127,14 @@ class Checker {
             return;
         }
     }
-    
-    if (contents.toLowerCase().indexOf(textToFind.toLowerCase()) < 0) {
+    const anchors = this.getAnchors(contents.toLowerCase());
+    if (anchors.indexOf(sectionAnchor.toLowerCase()) < 0) {
       this.errors.push(`Section ${sectionAnchor} not found in ${filePath}${extra}`);
     }
   }
   
   async ValidateURL(name, value, filePath) {
-    const result = await fetch(value);
+    const result = await fetch(value).catch(e => {console.error(value, e); });
     if (!result.ok) {
       this.errors.push(`URL not found ${value} while parsing ${filePath} (HTTP ${result.status})`);
     }
@@ -151,7 +162,7 @@ class Checker {
     // followed by the link name, the closing bracket
     // some optional space
     // left parens, a value, and right parens
-    const mdLinkRegex = /\[(?=([^`]*`[^`]*`)*[^`]*$)(?<name>[^\]]+)\]\s*\((?<value>[^)"]+)("(?<title>[^"]*)")?\)/g;
+    const mdLinkRegex = /\[(?=([^`]*`[^`]*`)*[^`]*$)(?<name>[^\]]+)\]\s*\((?<value>[^\s]+)("(?<title>[^"]*)")?\)/g;
   
     const results = contents.matchAll(mdLinkRegex);
     for (let result of results) {
