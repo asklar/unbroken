@@ -27,6 +27,12 @@ if (options.help) {
     process.exit(0);
 }
 
+function log(x) {
+  if (!options.quiet) {
+    console.log(x);
+  }
+}
+
 errors = [];
 /*
 Links can be of the following forms:
@@ -105,7 +111,7 @@ async function VerifyMarkDownFile(filePath) {
 //   process.stdout.clearLine();
 //   process.stdout.cursorTo(0);
 //   process.stdout.write(`Verifying ${filePath}`);
-  console.log(`Verifying ${filePath}`);
+  log(`Verifying ${filePath}`);
   const contents = fs.readFileSync(filePath).toString();
   // a bracket, but make sure it's followed by an even number of code quotes (`) and then non-code quotes,
   // followed by the link name, the closing bracket
@@ -130,7 +136,7 @@ async function RecurseFindMarkdownFiles(dirPath) {
     const filePath = path.join(dirPath, file);
     const shouldSkip = exclusions.find(x => filePath.startsWith(x));
     if (shouldSkip) { 
-        console.log(`skipping ${filePath}`);
+        log(`skipping ${filePath}`);
         return;
     } else {
         const stat = fs.statSync(filePath);
@@ -151,9 +157,7 @@ async function EnumerateMarkdownFiles(dirPath) {
   let n = 0;
   errors.forEach(err => {
         if (suppressions.indexOf(err) >= 0) {
-            if (!options.quiet) {
-                console.log(chalk.yellowBright.bold('WARNING:', chalk.white(err)));
-            }
+            log(chalk.yellowBright.bold('WARNING:', chalk.white(err)));
         } else {
             console.log(chalk.red.bold("ERROR:"), chalk.white(err));
             n++;
