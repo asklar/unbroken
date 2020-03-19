@@ -11,6 +11,7 @@ const optionDefinitions = [
     { name: 'exclusions', alias: 'e', type: String, typeLabel: '<file>', description: 'The exclusions file. Default is .unbroken_exclusions' },
     { name: 'local-only', alias: 'l', type: Boolean, description: 'Do not test http and https links'},
     { name: 'dir', alias: 'd', defaultOption: true, type: String, typeLabel: '<directory>', description: 'The directory to crawl'},
+    { name: 'init', alias: 'i', type: Boolean, description: 'Creates a default exclusions file if one doesn\'t already exist'},
     { name: 'quiet', alias: 'q', type: Boolean},
     { name: 'help', alias: '?', type: Boolean},
 ];
@@ -25,7 +26,16 @@ if (options.help) {
     console.log(chalk.cyan.underline.bold('Unbroken 1.0'), '- no more broken links in markdown!');
     console.log(usage);
     process.exit(0);
+} else if (options.init) {
+  if (fs.existsSync('.unbroken_exclusions')) {
+    logError('.unbroken_exclusions already exists');
+    process.exit(-1);
+  } else {
+    fs.writeFileSync('.unbroken_exclusions', "!node_modules");
+    process.exit(0);
+  }
 }
+
 
 function log(x) {
   if (!options.quiet) {
@@ -61,8 +71,7 @@ async function asyncForEach(array, callback, parallel) {
   }
 }
 
-function printError(type, value) {
-  const error = `${type} not found -> ${value}`;
+function logError(error) {
   console.log(chalk.red.bold("ERROR:"), chalk.white(error));
 }
 
@@ -159,21 +168,22 @@ async function EnumerateMarkdownFiles(dirPath) {
         if (suppressions.indexOf(err) >= 0) {
             log(chalk.yellowBright.bold('WARNING:', chalk.white(err)));
         } else {
-            console.log(chalk.red.bold("ERROR:"), chalk.white(err));
+            logError(err);
             n++;
         }
     });
     return n;
 }
 
-async function Do() {
+async function unbroken() {
   const n = await EnumerateMarkdownFiles(options.dir || '.');
   console.log(`${n} errors, ${errors.length - n} warnings.`);
-  process.exitCode = n;
+  return n;
 }
 
 const exclusionsFileName = options.exclusions || '.unbroken_exclusions';
 let suppressions;
+let exclusions;
 try {
     const contents = fs.readFileSync(exclusionsFileName).toString()
                   .split('\r\n')
@@ -181,8 +191,14 @@ try {
     suppressions = contents.filter(x => !x.startsWith('!'));
     exclusions = contents.filter(x => x.startsWith('!')).map(x => x.slice(1));
 } catch (e) {
-    console.log(e);
-  suppressions = '';
+    suppressions = [];
+    exclusions = [];
+}
+
+module.exports = unbroken;
+
+function Do() {
+  process.exitCode = unbroken();
 }
 
 Do();
