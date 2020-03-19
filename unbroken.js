@@ -175,7 +175,11 @@ async function asyncForEach(array, callback, parallel) {
 async function unbroken(options) {
   const c = new Checker(options);
   const n = await c.Process();
-  c.log(`${n} errors, ${c.errors.length - n} warnings.`);
+  if (c.errors.length) {
+      if (!options.superquiet) {
+          console.log(`${n} errors, ${c.errors.length - n} warnings.`);
+      }
+  }
   return n;
 }
 
