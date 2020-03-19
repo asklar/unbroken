@@ -84,14 +84,7 @@ class Checker {
       console.log(chalk.red.bold("ERROR:"), chalk.white(error));
     }
   }
-  ValidateSection(name, value, contents, filePath) {
-    const sectionAnchor = value.substring(1);
-    const textToFind = sectionAnchor.replace("-", " ");
-    if (!contents.indexOf(textToFind)) {
-      this.errors.push(`Section ${sectionAnchor} not found in ${filePath}`);
-    }
-  }
-  
+
   ValidateFile(name, value, filePath) {
     const dir = path.dirname(filePath);
     const pathToCheck = path.join(dir, value);
@@ -99,7 +92,33 @@ class Checker {
       const pathToCheckReplaced = path.join(dir, value.replace("_", "-")); // This isn't perfect as you could have a file named a_b-c
       if (!fs.existsSync(pathToCheckReplaced)) {
         this.errors.push(`File not found ${value} while parsing ${filePath}`);
+        return false;
       }
+    }
+    return true;
+  }
+  
+  
+  ValidateSection(name, value, contents, filePath) {
+    const hash = value.indexOf('#');
+    const sectionAnchor = value.substring(hash + 1);
+    const page = value.substring(0, hash);
+    const textToFind = sectionAnchor.replace(/-/g, ' ');
+    let extra = '';
+    if (page != '') {
+        // console.log(`Validating anchor in different page: ${page} ${textToFind} referenced in ${filePath}`);
+        extra = ` parsing ${filePath}`;
+        filePath = path.join(path.dirname(filePath), page);
+        if (this.ValidateFile(name, page, filePath)) {
+            contents = fs.readFileSync(filePath).toString();
+        } else {
+            contents = '';
+            // this.logError(`file not found ${filePath}`);
+        }
+    }
+    
+    if (contents.toLowerCase().indexOf(textToFind.toLowerCase()) < 0) {
+      this.errors.push(`Section ${sectionAnchor} not found in ${filePath}${extra}`);
     }
   }
   
@@ -118,7 +137,7 @@ class Checker {
       if (!this.options['local-only']) {
           await this.ValidateURL(name, value, filePath);
       }
-    } else if (value.startsWith("#")) {
+    } else if (value.indexOf("#") >= 0) {
       this.ValidateSection(name, value, contents, filePath);
     } else {
       this.ValidateFile(name, value, filePath);
