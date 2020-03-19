@@ -21,6 +21,14 @@ const TestCases = [
     { name: 'local-only(3)', expected: 1, options: { dir: 'test/test3', 'local-only': true, superquiet: true} },
     { name: 'with-web(3)', expected: 1, options: { dir: 'test/test3', 'local-only': false, superquiet: true} },
     { name: 'no-exclusions(3)', expected: 1, options: { dir: 'test/test3', 'local-only': false, superquiet: true, exclusions: 'test/empty_exclusions'} },
+
+    { name: 'local-only(imageLinks)', expected: 0, options: { dir: 'test/imageLinks', 'local-only': true, superquiet: true} },
+    { name: 'with-web(imageLinks)', expected: 0, options: { dir: 'test/imageLinks', 'local-only': false, superquiet: true} },
+    { name: 'no-exclusions(imageLinks)', expected: 0, options: { dir: 'test/imageLinks', 'local-only': false, superquiet: true, exclusions: 'test/empty_exclusions'} },
+
+    { name: 'local-only(brokenImage)', expected: 1, options: { dir: 'test/brokenImage', 'local-only': true, superquiet: true} },
+    { name: 'with-web(brokenImage)', expected: 1, options: { dir: 'test/brokenImage', 'local-only': false, superquiet: true} },
+    { name: 'no-exclusions(brokenImage)', expected: 1, options: { dir: 'test/brokenImage', 'local-only': false, superquiet: true, exclusions: 'test/empty_exclusions'} },
 ];
 
 async function Test() {

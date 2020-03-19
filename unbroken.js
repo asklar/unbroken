@@ -162,16 +162,39 @@ class Checker {
     // followed by the link name, the closing bracket
     // some optional space
     // left parens, a value, and right parens
-    const mdLinkRegex = /\[(?=([^`]*`[^`]*`)*[^`]*$)(?<name>[^\]]+)\]\s*\((?<value>[^\s]+)("(?<title>[^"]*)")?\)/g;
+    const baseLink = `\\[(?=([^\`]*\`[^\`]*\`)*[^\`]*$)(?<nameBASE>[^\\]]+)\\]\\s*\\((?<valueBASE>[^\\s]+)("(?<titleBASE>[^"]*)")?\\)`;
+    const imgLink = `(?<imageLinkTag>\\[\\!)${baseLink.replace(/BASE/g, 'img')}(?<endImageLinkTag>\\]\\((?<linkTarget>[^)]+)\\))`;
+    const nonImgLink = baseLink.replace(/BASE/g, '');
+    const mdLinkRegex = new RegExp(`(${imgLink})|(${nonImgLink})`, 'g');// //g;
   
     const results = contents.matchAll(mdLinkRegex);
     for (let result of results) {
+        let name = result.groups.name;
+        let value = result.groups.value;
+        let title = result.groups.title;
+        
+        if (result.groups.imageLinkTag) {
+            name = result.groups.nameimg;
+            value = result.groups.linkTarget;
+            title = result.groups.titleimg;
+            var imgSrc = result.groups.valueimg;
+        }
+
+        // console.log(`name = ${name} imglinktag = ${imgSrc != undefined} value = ${value} imgsrc = ${imgSrc} `);
       await this.ValidateLink(
-        result.groups.name,
-        result.groups.value,
+        name,
+        value,
         contents,
         filePath
       );
+      if (imgSrc) {
+          await this.ValidateLink(
+              name,
+              imgSrc,
+              null,
+              filePath
+          );
+      }
     }
   }
 }
