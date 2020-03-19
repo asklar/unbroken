@@ -9,10 +9,10 @@ const commandLineUsage = require("command-line-usage");
 
 const optionDefinitions = [
     { name: 'exclusions', alias: 'e', type: String, typeLabel: '<file>', description: 'The exclusions file. Default is .unbroken_exclusions' },
-    { name: 'local-only', alias: 'l', type: Boolean},
+    { name: 'local-only', alias: 'l', type: Boolean, description: 'Do not test http and https links'},
     { name: 'dir', alias: 'd', defaultOption: true, type: String, typeLabel: '<directory>', description: 'The directory to crawl'},
-    { name: 'help', alias: '?', type: Boolean},
     { name: 'quiet', alias: 'q', type: Boolean},
+    { name: 'help', alias: '?', type: Boolean},
 ];
 
 const options = commandLineArgs(optionDefinitions);
