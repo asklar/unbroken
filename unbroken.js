@@ -31,7 +31,7 @@ class Checker {
     { name: 'dir', alias: 'd', defaultOption: true, type: String, typeLabel: '<directory>', description: 'The directory to crawl'},
     { name: 'init', alias: 'i', type: Boolean, description: 'Creates a default exclusions file if one doesn\'t already exist'},
     { name: 'quiet', alias: 'q', type: Boolean},
-    { name: 'superquiet', alias: 'sq', type: Boolean},
+    { name: 'superquiet', alias: 's', type: Boolean},
     { name: 'help', alias: '?', type: Boolean},
   ];
 
