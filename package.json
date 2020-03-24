@@ -7,7 +7,7 @@
     "test": "node test.js"
   },
   "author": "Alexander Sklar",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "chalk": "^3.0.0",
     "command-line-args": "^5.1.1",
