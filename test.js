@@ -26,7 +26,7 @@ const TestCases = [
     { name: 'with-web(imageLinks)', expected: 0, options: { dir: 'test/imageLinks', 'local-only': false, superquiet: true} },
     { name: 'no-exclusions(imageLinks)', expected: 0, options: { dir: 'test/imageLinks', 'local-only': false, superquiet: true, exclusions: 'test/empty_exclusions'} },
 
-    { name: 'local-only(brokenImage)', expected: 1, options: { dir: 'test/brokenImage', 'local-only': true, superquiet: true} },
+    { name: 'local-only(brokenImage)', expected: 0, options: { dir: 'test/brokenImage', 'local-only': true, superquiet: true} },
     { name: 'with-web(brokenImage)', expected: 1, options: { dir: 'test/brokenImage', 'local-only': false, superquiet: true} },
     { name: 'no-exclusions(brokenImage)', expected: 1, options: { dir: 'test/brokenImage', 'local-only': false, superquiet: true, exclusions: 'test/empty_exclusions'} },
 ];
