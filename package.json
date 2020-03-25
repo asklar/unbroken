@@ -6,6 +6,9 @@
   "scripts": {
     "test": "node test.js"
   },
+  "bin": {
+    "unbroken": "./index.js"
+  },
   "author": "Alexander Sklar",
   "license": "MIT",
   "dependencies": {
