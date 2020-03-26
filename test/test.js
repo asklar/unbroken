@@ -29,6 +29,10 @@ const TestCases = [
     { name: 'local-only(brokenImage)', expected: 0, options: { dir: 'test/brokenImage', 'local-only': true, superquiet: true} },
     { name: 'with-web(brokenImage)', expected: 1, options: { dir: 'test/brokenImage', 'local-only': false, superquiet: true} },
     { name: 'no-exclusions(brokenImage)', expected: 1, options: { dir: 'test/brokenImage', 'local-only': false, superquiet: true, exclusions: 'test/empty_exclusions'} },
+
+    { name: 'local-only(https)', expected: 0, options: { dir: 'test/https', 'local-only': true, superquiet: true} },
+    { name: 'with-web(https)', expected: 0, options: { dir: 'test/https', 'local-only': false, superquiet: true} },
+    { name: 'no-exclusions(https)', expected: 0, options: { dir: 'test/https', 'local-only': false, superquiet: true, exclusions: 'test/empty_exclusions'} },
 ];
 
 async function Test() {
