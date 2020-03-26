@@ -1,0 +1,8 @@
+{
+  "type": "patch",
+  "comment": "Support for 403 cross-site credentials",
+  "packageName": "unbroken",
+  "email": "asklar@microsoft.com",
+  "dependentChangeType": "patch",
+  "date": "2020-03-26T01:27:10.603Z"
+}
