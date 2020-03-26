@@ -12,7 +12,7 @@
   "author": "Alexander Sklar",
   "license": "MIT",
   "dependencies": {
-    "async-request": "^1.2.0",
+    "axios": "^0.19.2",
     "chalk": "^3.0.0",
     "command-line-args": "^5.1.1",
     "command-line-usage": "^6.1.0"

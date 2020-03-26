@@ -33,6 +33,10 @@ const TestCases = [
     { name: 'local-only(https)', expected: 0, options: { dir: 'test/https', 'local-only': true, superquiet: true} },
     { name: 'with-web(https)', expected: 0, options: { dir: 'test/https', 'local-only': false, superquiet: true} },
     { name: 'no-exclusions(https)', expected: 0, options: { dir: 'test/https', 'local-only': false, superquiet: true, exclusions: 'test/empty_exclusions'} },
+
+    { name: 'local-only(parens)', expected: 0, options: { dir: 'test/parens', 'local-only': true, superquiet: true} },
+    { name: 'with-web(parens)', expected: 0, options: { dir: 'test/parens', 'local-only': false, superquiet: true} },
+    { name: 'no-exclusions(parens)', expected: 0, options: { dir: 'test/parens', 'local-only': false, superquiet: true, exclusions: 'test/empty_exclusions'} },
 ];
 
 async function Test() {
