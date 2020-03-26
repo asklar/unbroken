@@ -1,13 +1,13 @@
 {
   "name": "unbroken",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Detect broken links in markdown files",
-  "main": "index.js",
+  "main": "./bin/index.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "node test/test.js"
   },
   "bin": {
-    "unbroken": "./index.js"
+    "unbroken": "./bin/index.js"
   },
   "author": "Alexander Sklar",
   "license": "MIT",

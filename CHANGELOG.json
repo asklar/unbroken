@@ -1,0 +1,32 @@
+{
+  "name": "unbroken",
+  "entries": [
+    {
+      "date": "Thu, 26 Mar 2020 00:33:49 GMT",
+      "tag": "unbroken_v1.0.4",
+      "version": "1.0.4",
+      "comments": {
+        "patch": [
+          {
+            "comment": "add beachball",
+            "author": "asklar@microsoft.com",
+            "commit": "ab50b98fc4c4a8389318f12868b636d3ea5c9b13",
+            "package": "unbroken"
+          },
+          {
+            "comment": "add package-lock.json",
+            "author": "asklar@microsoft.com",
+            "commit": "ab50b98fc4c4a8389318f12868b636d3ea5c9b13",
+            "package": "unbroken"
+          },
+          {
+            "comment": "add marker for linux",
+            "author": "asklar@microsoft.com",
+            "commit": "ab50b98fc4c4a8389318f12868b636d3ea5c9b13",
+            "package": "unbroken"
+          }
+        ]
+      }
+    }
+  ]
+}

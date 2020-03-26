@@ -1,4 +1,4 @@
-const unbroken = require('./unbroken');
+const unbroken = require('../lib/unbroken');
 const chalk = require('chalk');
 
 function AssertAreEqual(a, b, testcase) {
