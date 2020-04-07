@@ -1,0 +1,8 @@
+{
+  "type": "patch",
+  "comment": "Support dots in anchors",
+  "packageName": "unbroken",
+  "email": "asklar@microsoft.com",
+  "dependentChangeType": "patch",
+  "date": "2020-04-07T19:54:36.984Z"
+}
