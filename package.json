@@ -4,6 +4,7 @@
   "description": "Detect broken links in markdown files",
   "main": "./bin/index.js",
   "scripts": {
+    "change": "beachball change",
     "test": "node test/test.js"
   },
   "bin": {
