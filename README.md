@@ -3,12 +3,12 @@
 
 Unbroken is a NodeJS command-line utility to detect broken links in .md files.
 ### Usage
-`node index.js [options]`
+`npx unbroken [options]`
 The exit code represents the number of errors detected so you can use it e.g. in CI loops.
 
 #### Options
 ```
-C:\rnw>node node_modules\unbroken -?
+C:\rnw>npx unbroken -?
 Unbroken 1.0 - no more broken links in markdown!
 
 Options
