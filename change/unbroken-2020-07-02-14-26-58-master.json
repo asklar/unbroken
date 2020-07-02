@@ -1,0 +1,8 @@
+{
+  "type": "minor",
+  "comment": "Add support for local files using references to sections as line numbers. This convention is locally supported in editors like VsCode, and supported by common websites like GitHub.",
+  "packageName": "unbroken",
+  "email": "dannyvv@microsoft.com",
+  "dependentChangeType": "patch",
+  "date": "2020-07-02T21:26:58.112Z"
+}

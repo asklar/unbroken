@@ -13,10 +13,12 @@ Unbroken 1.0 - no more broken links in markdown!
 
 Options
 
-  -e, --exclusions <file>   The exclusions file. Default is .unbroken_exclusions
-  -l, --local-only          Do not test http and https links
-  -d, --dir <directory>     The directory to crawl
-  -i, --init                Creates a default exclusions file if one doesn't already exist
+  -e, --exclusions <file>            The exclusions file. Default is .unbroken_exclusions
+  -l, --local-only                   Do not test http and https links
+  -d, --dir <directory>              The directory to crawl
+  -i, --init                         Creates a default exclusions file if one doesn't already exist
+  -a, --allow-local-line-sections    Whether links to local files are allowed to have line sections like
+                                     foo.cpp#L12
   -q, --quiet
   -s, --superquiet
   -?, --help
