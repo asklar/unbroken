@@ -28,6 +28,7 @@ Options
 ### Exclusions & suppressions
 You can create a `.unbroken_exclusions` file to suppress individual errors, or to skip traversing certain directories.
 Just copy/paste the error you want to suppress from the output onto the `.unbroken_exclusions` file, or add a directory prefix preceded by a !.
+You can also use globs.
 
 Example:
 
@@ -37,4 +38,6 @@ URL not found https://github.com/microsoft/react-native-windows/tree/master/curr
 !node_modules
 
 !test\test2\test.md
+
+!**/node_modules
 ```
