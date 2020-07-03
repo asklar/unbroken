@@ -1,6 +1,6 @@
 {
   "name": "unbroken",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Detect broken links in markdown files",
   "main": "./bin/index.js",
   "scripts": {
