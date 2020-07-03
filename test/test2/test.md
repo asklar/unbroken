@@ -1,4 +1,4 @@
-## Anchor
+## Some anchor
 
 [Foo](doesntExist.md) 
 
