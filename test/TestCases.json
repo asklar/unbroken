@@ -8,12 +8,12 @@
     { "name": "with-web(2)", "expected": 1, "options": { "dir": "test/test2", "local-only": false, "superquiet": true} },
     { "name": "no-exclusions(2)", "expected": 1, "options": { "dir": "test/test2", "local-only": false, "superquiet": true, "exclusions": "test/empty_exclusions"} },
 
-    { "name": "local-only(3)", "expected": 2, "options": { "dir": "test/test3", "local-only": true, "superquiet": true} },
-    { "name": "local-only-line-ok(3)", "expected": 1, "options": { "dir": "test/test3", "local-only": true, "allow-local-line-sections": true, "superquiet": true} },
-    { "name": "with-web(3)", "expected": 2, "options": { "dir": "test/test3", "local-only": false, "superquiet": true} },
-    { "name": "with-web-line-ok(3)", "expected": 1, "options": { "dir": "test/test3", "local-only": false, "allow-local-line-sections": true, "superquiet": true} },
-    { "name": "no-exclusions(3)", "expected": 2, "options": { "dir": "test/test3", "local-only": false, "superquiet": true, "exclusions": "test/empty_exclusions"} },
-    { "name": "no-exclusions-line-ok(3)", "expected": 1, "options": { "dir": "test/test3", "local-only": false, "allow-local-line-sections": true, "superquiet": true, "exclusions": "test/empty_exclusions"} },
+    { "name": "local-only(3)", "expected": 1, "options": { "dir": "test/test3", "local-only": true, "superquiet": true} },
+    { "name": "local-only-line-ok(3)", "expected": 0, "options": { "dir": "test/test3", "local-only": true, "allow-local-line-sections": true, "superquiet": true} },
+    { "name": "with-web(3)", "expected": 1, "options": { "dir": "test/test3", "local-only": false, "superquiet": true} },
+    { "name": "with-web-line-ok(3)", "expected": 0, "options": { "dir": "test/test3", "local-only": false, "allow-local-line-sections": true, "superquiet": true} },
+    { "name": "no-exclusions(3)", "expected": 1, "options": { "dir": "test/test3", "local-only": false, "superquiet": true, "exclusions": "test/empty_exclusions"} },
+    { "name": "no-exclusions-line-ok(3)", "expected": 0, "options": { "dir": "test/test3", "local-only": false, "allow-local-line-sections": true, "superquiet": true, "exclusions": "test/empty_exclusions"} },
 
     { "name": "local-only(imageLinks)", "expected": 0, "options": { "dir": "test/imageLinks", "local-only": true, "superquiet": true} },
     { "name": "with-web(imageLinks)", "expected": 0, "options": { "dir": "test/imageLinks", "local-only": false, "superquiet": true} },
@@ -31,7 +31,13 @@
     { "name": "with-web(parens)", "expected": 0, "options": { "dir": "test/parens", "local-only": false, "superquiet": true} },
     { "name": "no-exclusions(parens)", "expected": 0, "options": { "dir": "test/parens", "local-only": false, "superquiet": true, "exclusions": "test/empty_exclusions"} },
 
-    { "name": "local-only(specialChars)", "expected": 0, "options": { "dir": "test/specialChars", "local-only": true, "superquiet": true} }
+    { "name": "local-only(specialChars)", "expected": 0, "options": { "dir": "test/specialChars", "local-only": true, "superquiet": true} },
 
+    { "name": "local-only(exclusions)", "expected": 0, "options": { "dir": "test/exclusions", "local-only": true, "superquiet": true } },
+    { "name": "no-exclusions(exclusions)", "expected": 1, "options": { "dir": "test/exclusions", "local-only": true, "superquiet": true, "exclusions": "test/empty_exclusions" } },
+    
+    { "name": "local-only(glob-exclusions)", "expected": 0, "options": { "dir": "test/exclusionsGlob", "local-only": true, "superquiet": true } },
+    { "name": "no-exclusions(glob-exclusions)", "expected": 1, "options": { "dir": "test/exclusionsGlob", "local-only": true, "superquiet": true, "exclusions": "test/empty_exclusions" } }
+    
 ]
 }

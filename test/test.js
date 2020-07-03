@@ -16,7 +16,7 @@ const TestCases = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'TestCases.
 async function Test() {
     console.log();
     let nErrors = 0;
-    for (var i = 0; i < TestCases.length; i++) {
+    for (let i = 0; i < TestCases.length; i++) {
         try {
             if (!process.env.CI) {
                 process.stdout.write(TestCases[i].name + ' ');
