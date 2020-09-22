@@ -39,8 +39,8 @@
     { "name": "local-only(glob-exclusions)", "expected": 0, "options": { "dir": "test/exclusionsGlob", "local-only": true, "superquiet": true } },
     { "name": "no-exclusions(glob-exclusions)", "expected": 1, "options": { "dir": "test/exclusionsGlob", "local-only": true, "superquiet": true, "exclusions": "test/empty_exclusions" } },
     
-    { "name": "local-only(nameCollisions)", "expected": 0, "options": { "dir": "test/nameCollisions", "local-only": true, "superquiet": true } },
-    { "name": "no-exclusions(nameCollisions)", "expected": 0, "options": { "dir": "test/nameCollisions", "local-only": true, "superquiet": true, "exclusions": "test/empty_exclusions" } }
+    { "name": "local-only(nameCollisions)", "expected": 0, "options": { "dir": "test/nameCollision", "local-only": true, "superquiet": true } },
+    { "name": "no-exclusions(nameCollisions)", "expected": 0, "options": { "dir": "test/nameCollision", "local-only": true, "superquiet": true, "exclusions": "test/empty_exclusions" } }
 
 ]
 }
