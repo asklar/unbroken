@@ -13,7 +13,7 @@ function AssertAreEqual(a, b, testcase) {
 
 const TestCases = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'TestCases.json'))).TestCases;
 
-async function Test() {
+async function Test(option) {
     console.log();
     let nErrors = 0;
     for (let i = 0; i < TestCases.length; i++) {
@@ -22,9 +22,11 @@ async function Test() {
                 process.stdout.write(TestCases[i].name + ' ');
                 process.stdout.cursorTo(0);
             }
-            const v = await unbroken.unbroken(TestCases[i].options);
-            if (AssertAreEqual(TestCases[i].expected, v, TestCases[i].name)) {
-                console.log(TestCases[i].name, chalk.greenBright('ok'));
+            if (option !== '-l' || TestCases[i].options['local-only']) {
+                const v = await unbroken.unbroken(TestCases[i].options);
+                if (AssertAreEqual(TestCases[i].expected, v, TestCases[i].name)) {
+                    console.log(TestCases[i].name, chalk.greenBright('ok'));
+                }
             }
         } catch (e) {
             console.error(e);
@@ -34,4 +36,4 @@ async function Test() {
     process.exitCode = nErrors;
 }
 
-Test();
+Test(process.argv[2]);
