@@ -1,0 +1,1 @@
+Here is a [link to twitter](https://twitter.com/alexsklar). Twitter rejects requests without a user agent from a set of supported browsers.

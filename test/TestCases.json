@@ -49,6 +49,9 @@
     { "name": "no-exclusions(CRLF-exclusions)", "expected": 2, "options": { "dir": "test/exclusionsCRLF", "local-only": true, "superquiet": true, "exclusions": "test/empty_exclusions" } },
 
     { "name": "local-only(IDs)", "expected": 0, "options": { "dir": "test/IDs", "local-only": true, "superquiet": true, "parse-ids": true } },
-    { "name": "local-only(IDs, no ID parsing)", "expected": 1, "options": { "dir": "test/IDs", "local-only": true, "superquiet": true } }
+    { "name": "local-only(IDs, no ID parsing)", "expected": 1, "options": { "dir": "test/IDs", "local-only": true, "superquiet": true } },
+
+    { "name": "user-agent", "expected": 0, "options": { "dir": "test/userAgent", "superquiet": true} },
+    { "name": "user-agent", "expected": 1, "options": { "dir": "test/userAgent", "superquiet": true, "user-agent": "foo"} }
 ]
 }
