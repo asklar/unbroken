@@ -4,7 +4,7 @@ import {default as commandLineUsage} from "command-line-usage";
 import {Checker, Options} from './checker';
 
 import * as fs from 'fs';
-import * as chalk from 'chalk';
+import chalk from 'chalk';
 
 async function unbroken(options: Options) {
   const c = new Checker(options);

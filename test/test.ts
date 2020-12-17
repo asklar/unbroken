@@ -12,7 +12,7 @@ interface TestCase {
 function AssertAreEqual(a: any, b: any, testcase: string) {
     if (a !== b) {
         console.log(testcase, chalk.redBright(`Expected ${a}, actual ${b}`));
-        return false;
+        throw new Error(`${testcase} - expected ${a}, actual ${b}`);
     }
     return true;
 }
@@ -22,21 +22,24 @@ const TestCases = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'TestCases.
 async function Test(option?: string | undefined) {
     console.log();
     let nErrors = 0;
-    for (let i = 0; i < TestCases.length; i++) {
-        const checker = new unbroken.Checker(TestCases[i].options);
+
+    const testCases = (!option || option === '-l') ? TestCases : TestCases.filter(x => x.name === option);
+
+    for (const testcase of testCases) {
+        const checker = new unbroken.Checker(testcase.options);
         try {
             if (!process.env.CI) {
-                process.stdout.write(TestCases[i].name + ' ');
+                process.stdout.write(testcase.name + ' ');
                 process.stdout.cursorTo(0);
             }
-            if (option !== '-l' || TestCases[i].options['local-only']) {
+            if (option !== '-l' || testcase.options['local-only']) {
                 const v = await checker.Process();
-                if (AssertAreEqual(TestCases[i].expected, v, TestCases[i].name)) {
-                    console.log(TestCases[i].name, chalk.greenBright('ok'));
+                if (AssertAreEqual(testcase.expected, v, testcase.name)) {
+                    console.log(testcase.name, chalk.greenBright('ok'));
                 }
             } else if (option === '-l') {
                 // the test was not local but we are running only local tests
-                console.log(TestCases[i].name, chalk.grey('skipped'));
+                console.log(testcase.name, chalk.grey('skipped'));
             }
         } catch (e) {
             console.error(e);
