@@ -5,7 +5,7 @@
   "main": "./bin/index.js",
   "scripts": {
     "change": "beachball change",
-    "test": "tsc -p test && node test/test.js",
+    "test": "yarn build && yarn tsc -p test && node test/test.js",
     "build": "tsc -p src",
     "lint": "eslint src/**/*.ts test/*.ts"
   },
