@@ -7,7 +7,7 @@
     "change": "beachball change",
     "test": "tsc -p test && node test/test.js",
     "build": "tsc -p src",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint src/**/*.ts test/*.ts"
   },
   "bin": {
     "unbroken": "./bin/index.js"
@@ -30,10 +30,14 @@
     "@typescript-eslint/parser": "^4.10.0",
     "beachball": "^1.23.1",
     "eslint": "7.12.1",
+    "eslint-config-prettier": "^7.0.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "2.22.1",
     "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-prettier": "^3.3.0",
     "eslint-plugin-promise": "4.2.1",
+    "prettier": "^2.2.1",
+    "prettier-linter-helpers": "^1.0.0",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
   },
