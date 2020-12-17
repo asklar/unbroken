@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "target": "es6",
+      "module": "commonjs",
+      "lib": ["es6", "ES2020" ],
+      "declaration": true,
+      "outDir": "lib",
+      "rootDir": "src",
+      "strict": true,
+      "types": ["node"],
+      "esModuleInterop": true,
+      "resolveJsonModule": true
+    }
+  }

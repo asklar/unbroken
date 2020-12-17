@@ -1,20 +1,31 @@
-const fs = require("fs");
-const path = require("path");
-const chalk = require("chalk");
-const axios = require('axios').default;
-const micromatch = require('micromatch');
-
-const util = require("util");
+import * as fs from 'fs';
+import * as path from 'path';
+import chalk from 'chalk';
+import {default as axios} from 'axios';
+import micromatch from 'micromatch';
+import * as util from 'util';
+import { OptionDefinition } from 'command-line-usage';
 const readdir = util.promisify(fs.readdir);
 
-function msleep(n) {
+function msleep(n: number) {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, n);
 }
 
 const DefaultUserAgent = 'Chrome/89.0.4346.0';
 
-class Checker {
-  constructor(options) {
+export interface Options {
+  quiet: boolean;
+  superquiet: boolean;
+  dir: string;
+  exclusions: string;
+  'local-only': boolean;
+  'allow-local-line-sections': boolean;
+  'parse-ids': boolean;
+  'user-agent': string;
+}
+
+export class Checker {
+  constructor(public readonly options: Options) {
     this.errors = [];
     this.options = options;
     this.ids = {};
@@ -30,15 +41,20 @@ class Checker {
         const contents = fs.readFileSync(exclusionsFileName).toString()
                       .split(/\r?\n/)
                       .filter(x => x.trim() != '') || '';
-        this.suppressions = contents.filter(x => !x.startsWith('!')).map(x => this.normalizeSlashes(x));
-        this.exclusions = contents.filter(x => x.startsWith('!')).map(x => this.normalizeSlashes(path.normalize(x.slice(1))));
+        this.suppressions = contents.filter(x => !x.startsWith('!')).map(x => Checker.normalizeSlashes(x));
+        this.exclusions = contents.filter(x => x.startsWith('!')).map(x => Checker.normalizeSlashes(path.normalize(x.slice(1))));
     } catch (e) {
         this.suppressions = [];
         this.exclusions = [];
     }
   }
 
-  static optionDefinitions = [
+  errors: string[];
+  ids: Record<string, string>;
+  suppressions: string[];
+  exclusions: string[];
+
+  public static optionDefinitions : OptionDefinition[]= [
     { name: 'exclusions', alias: 'e', type: String, typeLabel: '<file>', description: 'The exclusions file. Default is .unbroken_exclusions' },
     { name: 'local-only', alias: 'l', type: Boolean, description: 'Do not test http and https links'},
     { name: 'dir', alias: 'd', defaultOption: true, type: String, typeLabel: '<directory>', description: 'The directory to crawl'},
@@ -52,15 +68,15 @@ class Checker {
   ];
 
 
-  async RecurseFindMarkdownFiles(dirPath, callback) {
+  private async RecurseFindMarkdownFiles(dirPath: string, callback: {(path: string): Promise<void>}) {
     const files = (await readdir(dirPath)) || [];
     const checker = this;
-    await asyncForEach(files, async file => {
+    await asyncForEach(files, async (file: string) => {
       const filePath = path.join(dirPath, file);
-      const relFilePath = this.normalizeSlashes(this.getRelativeFilePath(filePath));
+      const relFilePath = Checker.normalizeSlashes(this.getRelativeFilePath(filePath));
       const shouldSkip = micromatch.isMatch(relFilePath, checker.exclusions, { nocase: true });
       if (shouldSkip) { 
-        checker.log(`Skipping ${this.normalizeSlashes(relFilePath)}.`);
+        checker.log(`Skipping ${Checker.normalizeSlashes(relFilePath)}.`);
         return;
       } else {
         const stat = fs.statSync(filePath);
@@ -73,7 +89,7 @@ class Checker {
     }, true );
   }
   
-  GetAndStoreId(path) {
+  private async GetAndStoreId(path: string) {
     const lines = fs.readFileSync(path).toString().split(/[\r\n]+/g);
     if (lines.length > 2 && lines[0].trim() === '---' && lines[1].toLowerCase().startsWith('id:')) {
       const id = lines[1].slice('id:'.length).trim();
@@ -82,7 +98,7 @@ class Checker {
     }
   }
 
-  async Process(dirPath) {
+  async Process(dirPath?: string) {
     if (!dirPath) {
         dirPath = this.options.dir;
     }
@@ -103,35 +119,35 @@ class Checker {
       return n;
   }
   
-  log(...args) {
+  private log(...args: any) {
     if (!this.options.quiet) {
       console.log(args.join(' '));
     }
   }
 
-  logError(error) {
+  private logError(error: string) {
     if (!this.options.superquiet) {
       console.log(chalk.red.bold("ERROR:"), chalk.white(error));
     }
   }
 
-  getRelativeFilePath(filePath) {
+  private getRelativeFilePath(filePath: string) {
     return filePath.substr(this.options.dir.length + 1);
   }
 
   
-  normalizeSlashes(str) {
+  private static normalizeSlashes(str: string) {
     return str.replace(/\\/g, '/');
   }
 
-  ValidateFile(name, value, filePath) {
+  private ValidateFile(name: string, value: string, filePath: string) {
     const dir = path.dirname(filePath);
     const pathToCheck = path.join(dir, value);
     if (!fs.existsSync(pathToCheck)) {
       const pathToCheckReplaced = path.join(dir, value.replace(/_/g, '-')); // This isn't perfect as you could have a file named a_b-c
       if (!fs.existsSync(pathToCheckReplaced)) {
         if (!this.ids[value]) {
-          this.errors.push(`File not found ${this.normalizeSlashes(path.normalize(value))} while parsing ${this.normalizeSlashes(this.getRelativeFilePath(filePath))}`);
+          this.errors.push(`File not found ${Checker.normalizeSlashes(path.normalize(value))} while parsing ${Checker.normalizeSlashes(this.getRelativeFilePath(filePath))}`);
           return undefined;
         } else {
           // console.log(`Referencing id ${value} -> ${this.ids[value]}`);
@@ -144,12 +160,12 @@ class Checker {
     return path.normalize(pathToCheck);
   }
   
-  getAnchors(content) {
+  private getAnchors(content: string) : string[] {
     const anchorRegex = /(^\#+|\n+\#+)\s*(?<anchorTitle>[^\s].*)/g;
     let anchors = [];
     const results = content.matchAll(anchorRegex);
-    for (let result of results) {
-        const title = result.groups.anchorTitle;
+    for (const result of results) {
+        const title = result.groups!.anchorTitle;
         const transformed = title.replace(/[^\w\d\s-]+/g, '').replace(/ /g, '-');
         let newItem = transformed;
         const found = anchors.indexOf(transformed) !== -1;
@@ -164,14 +180,14 @@ class Checker {
     return anchors;
   }
   
-  ValidateSection(name, value, contents, filePath) {
+  private ValidateSection(name: string, value: string, contents: string | null, filePath: string) {
     const hash = value.indexOf('#');
     const sectionAnchor = value.substring(hash + 1);
     const page = value.substring(0, hash);
     let extra = '';
     if (page != '') {
         // console.log(`Validating anchor in different page: ${page} ${textToFind} referenced in ${filePath}`);
-        extra = ` while parsing ${this.normalizeSlashes(this.getRelativeFilePath(filePath))}`;
+        extra = ` while parsing ${Checker.normalizeSlashes(this.getRelativeFilePath(filePath))}`;
         const realFilePath = this.ValidateFile(name, page, filePath);
         if (realFilePath) {
             contents = fs.readFileSync(realFilePath).toString();
@@ -180,19 +196,21 @@ class Checker {
             return;
         }
     }
+    if (!contents) { this.errors.push(`Couldn't read contents`); return; }
+
     const anchors = this.getAnchors(contents.toLowerCase());
     if (anchors.indexOf(sectionAnchor.toLowerCase()) < 0) {
       if (anchors.indexOf(sectionAnchor.replace(/\./g, '').toLowerCase()) < 0) {
         // if this is a local file (non-http/https)
-        if (! (this.options['allow-local-line-sections'] && !this.IsWebLink(value) && sectionAnchor.length > 1 && sectionAnchor[0] === 'L' && !isNaN(sectionAnchor.substring(1))))
+        if (! (this.options['allow-local-line-sections'] && !Checker.IsWebLink(value) && sectionAnchor.length > 1 && sectionAnchor[0] === 'L' && !isNaN(parseInt(sectionAnchor.substring(1)))))
         {
-          this.errors.push(`Section ${sectionAnchor} not found in ${this.normalizeSlashes(this.getRelativeFilePath(filePath))}${extra}. Available anchors: ${JSON.stringify(anchors)}`);
+          this.errors.push(`Section ${sectionAnchor} not found in ${Checker.normalizeSlashes(this.getRelativeFilePath(filePath))}${extra}. Available anchors: ${JSON.stringify(anchors)}`);
         }
       }
     }
   }
   
-  async ValidateURL(name, value, filePath) {
+  private async ValidateURL(name: string, value: string, filePath: string) {
     const maxIterations = 5;
 
     for (let i = 0; i < maxIterations; i++) {
@@ -223,7 +241,7 @@ class Checker {
             // we aren't ignoring HTTP/429... try again after sleeping
             this.log(`HTTP/429, request retry after ${retryAfterSeconds}s, sleeping for ${sleepSeconds}s`)
           } else {
-            this.errors.push(`URL not found ${value} while parsing ${this.normalizeSlashes(this.getRelativeFilePath(filePath))} (HTTP ${e.response.status})`);
+            this.errors.push(`URL not found ${value} while parsing ${Checker.normalizeSlashes(this.getRelativeFilePath(filePath))} (HTTP ${e.response.status})`);
             return false;
           }
         }
@@ -231,14 +249,14 @@ class Checker {
       } //catch
     } // for
 
-    this.errors.push(`URL not found ${value} while parsing ${this.normalizeSlashes(this.getRelativeFilePath(filePath))} after ${maxIterations} retries`);
+    this.errors.push(`URL not found ${value} while parsing ${Checker.normalizeSlashes(this.getRelativeFilePath(filePath))} after ${maxIterations} retries`);
     return false;
  }
   
-  async ValidateLink(name, value, contents, filePath) {
+  private async ValidateLink(name: string, value: string, contents: string | null, filePath: string) {
     if (value.startsWith("mailto:")) {
       return;
-    } else if (this.IsWebLink(value)) {
+    } else if (Checker.IsWebLink(value)) {
       if (!this.options['local-only']) {
         await this.ValidateURL(name, value, filePath);
       }
@@ -249,12 +267,12 @@ class Checker {
     }
   }
 
-  IsWebLink(url) {
+  private static IsWebLink(url: string) {
     return url.startsWith("http://") || url.startsWith("https://");
   }
 
-  async VerifyMarkDownFile(filePath) {
-    this.log(`Verifying ${this.normalizeSlashes(this.getRelativeFilePath(filePath))}`);
+  async VerifyMarkDownFile(filePath: string) {
+    this.log(`Verifying ${Checker.normalizeSlashes(this.getRelativeFilePath(filePath))}`);
     const contents = fs.readFileSync(filePath).toString();
     // a bracket, but make sure it's followed by an even number of code quotes (`) and then non-code quotes,
     // followed by the link name, the closing bracket
@@ -271,16 +289,18 @@ class Checker {
   
     const results = contents.matchAll(mdLinkRegex);
 
-    for (let result of results) {
-        let name = result.groups.name;
-        let value = result.groups.value;
-        let title = result.groups.title;
+    let imgSrc: string | undefined;
+    for (const result of results) {
+        const groups = result.groups!;
+        let name = groups.name;
+        let value = groups.value;
+        let title = groups.title;
 
-        if (result.groups.imageLinkTag) {
-            name = result.groups.nameimg;
-            value = result.groups.linkTarget;
-            title = result.groups.titleimg;
-            var imgSrc = result.groups.valueimg;
+        if (groups.imageLinkTag) {
+            name = groups.nameimg;
+            value = groups.linkTarget;
+            title = groups.titleimg;
+            imgSrc = groups.valueimg;
         }
 
         // console.log(`name = ${name} imglinktag = ${imgSrc != undefined} value = ${value} imgsrc = ${imgSrc} `);
@@ -313,7 +333,7 @@ Links can be of the following forms:
 [here](current/docs/CoreParityStatus.md)
 */
 
-async function asyncForEach(array, callback, parallel) {
+async function asyncForEach(array: string[], callback: { (file: string, index: number, arr: string[]): Promise<void>  }, parallel: boolean) {
   let calls = [];
   for (let index = 0; index < array.length; index++) {
       const call = callback(array[index], index, array);
@@ -328,16 +348,3 @@ async function asyncForEach(array, callback, parallel) {
   }
 }
 
-async function unbroken(options) {
-  const c = new Checker(options);
-  const n = await c.Process();
-  if (c.errors.length) {
-      if (!options.superquiet) {
-          console.log(`${n} errors, ${c.errors.length - n} warnings.`);
-      }
-  }
-  return n;
-}
-
-
-module.exports = {unbroken, Checker};
