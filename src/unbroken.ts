@@ -5,6 +5,7 @@ import { Checker, Options } from "./checker";
 
 import * as fs from "fs";
 import chalk from "chalk";
+import path from "path";
 
 async function unbroken(options: Options) {
   const c = new Checker(options);
@@ -26,8 +27,12 @@ async function Do() {
   ]);
 
   if (options.help) {
+    const version = JSON.parse(
+      fs.readFileSync(path.join(__dirname, "../package.json")).toString()
+    ).version;
+
     console.log(
-      chalk.cyan.underline.bold("Unbroken 1.0"),
+      chalk.cyan.underline.bold(`Unbroken ${version}`),
       "- no more broken links in markdown!"
     );
     console.log(usage);
