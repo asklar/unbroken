@@ -5,8 +5,8 @@
   "main": "./bin/index.js",
   "scripts": {
     "change": "beachball change",
-    "test": "node lib/test/test.js",
-    "build": "tsc -p ."
+    "test": "tsc -p test && node test/test.js",
+    "build": "tsc -p src"
   },
   "bin": {
     "unbroken": "./bin/index.js"

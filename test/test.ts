@@ -1,5 +1,5 @@
-import * as unbroken from './checker';
-import * as chalk from 'chalk';
+import * as unbroken from '../lib/checker'
+import chalk from 'chalk';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -17,7 +17,7 @@ function AssertAreEqual(a: any, b: any, testcase: string) {
     return true;
 }
 
-const TestCases = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../test/TestCases.json')).toString()).TestCases as TestCase[];
+const TestCases = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'TestCases.json')).toString()).TestCases as TestCase[];
 
 async function Test(option?: string | undefined) {
     console.log();
@@ -34,6 +34,9 @@ async function Test(option?: string | undefined) {
                 if (AssertAreEqual(TestCases[i].expected, v, TestCases[i].name)) {
                     console.log(TestCases[i].name, chalk.greenBright('ok'));
                 }
+            } else if (option === '-l') {
+                // the test was not local but we are running only local tests
+                console.log(TestCases[i].name, chalk.grey('skipped'));
             }
         } catch (e) {
             console.error(e);

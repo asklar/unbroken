@@ -4,11 +4,12 @@
       "module": "commonjs",
       "lib": ["es6", "ES2020" ],
       "declaration": true,
-      "outDir": "lib",
-      "rootDir": "src",
+      "outDir": ".",
+      "rootDir": ".",
       "strict": true,
       "types": ["node"],
       "esModuleInterop": true,
       "resolveJsonModule": true
-    }
+    },
+    "exclude": []
   }
