@@ -11,7 +11,7 @@ if NOT "%branch%"=="master" (
 call npx bump
 git commit -m "bump package.json" -i package.json
 git push
-yarn build
+call yarn build
 npm publish
 
 endlocal
