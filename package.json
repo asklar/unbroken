@@ -9,6 +9,10 @@
     "build": "tsc -p src",
     "lint": "eslint src/**/*.ts test/*.ts"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/asklar/unbroken.git"
+  },
   "bin": {
     "unbroken": "./bin/index.js"
   },
