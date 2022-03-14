@@ -29,6 +29,7 @@ export class Checker {
     this.errors = [];
     this.options = options;
     this.ids = {};
+    this.urlCache = {};
     if (this.options.superquiet) {
       this.options.quiet = true;
     }
@@ -62,6 +63,7 @@ export class Checker {
   ids: Record<string, string>;
   suppressions: string[];
   exclusions: string[];
+  urlCache: Record<string, number>;
 
   public static optionDefinitions: OptionDefinition[] = [
     {
@@ -306,63 +308,89 @@ export class Checker {
 
   private async ValidateURL(name: string, value: string, filePath: string) {
     const maxIterations = 5;
+    const ignoring429 = this.suppressions.findIndex((x) => x === "HTTP/429") !== -1;
 
-    for (let i = 0; i < maxIterations; i++) {
-      if (i > 0) {
-        this.log(`Retrying ${value}`);
-      }
+    let result: number | undefined = value in this.urlCache ? this.urlCache[value] : undefined;
 
-      try {
-        const userAgent = this.options["user-agent"] || DefaultUserAgent;
-        const r = await axios.get(value, {
-          headers: { "User-Agent": userAgent },
-        });
-        if (r.status === 200) {
-          return true;
+    if (result === 200) {
+      // Previous success, bail early
+      return true;
+    } else if (result === undefined) {
+      // No previous result, actually check URL
+
+      for (let i = 0; i < maxIterations; i++) {
+        if (i > 0) {
+          this.log(`Retrying ${value}`);
         }
-      } catch (e) {
-        let sleepSeconds = 0;
-        if (
-          Object.prototype.hasOwnProperty.call(e, "response") &&
-          e.response !== undefined
-        ) {
-          if (e.response.status === 429) {
-            if (this.suppressions.findIndex((x) => x === "HTTP/429") !== -1) {
-              return true; // ignore HTTP/429 errors
-            }
 
-            const retryAfterSeconds = Object.prototype.hasOwnProperty.call(
-              e.response.headers,
-              "retry-after"
-            )
-              ? parseInt(e.response.headers["retry-after"])
-              : 0;
-
-            sleepSeconds = ((i + 1) / maxIterations) * retryAfterSeconds;
-
-            // we aren't ignoring HTTP/429... try again after sleeping
-            this.log(
-              `HTTP/429, request retry after ${retryAfterSeconds}s, sleeping for ${sleepSeconds}s`
-            );
-          } else {
-            this.errors.push(
-              `URL not found ${value} while parsing ${Checker.normalizeSlashes(
-                this.getRelativeFilePath(filePath)
-              )} (HTTP ${e.response.status})`
-            );
-            return false;
+        try {
+          const userAgent = this.options["user-agent"] || DefaultUserAgent;
+          const r = await axios.get(value, {
+            headers: { "User-Agent": userAgent },
+          });
+          if (r.status === 200) {
+            // Save success response as result
+            result = r.status;
+            break;
           }
-        }
-        msleep(100 + sleepSeconds * 1000);
-      } // catch
-    } // for
+        } catch (e) {
+          let sleepSeconds = 0;
+          if (
+            Object.prototype.hasOwnProperty.call(e, "response") &&
+            e.response !== undefined
+          ) {
+            if (result !== 429 || (result === 429 && ignoring429)) {
+              // An actual error (or a 429 we're ignoring), save status and bail
+              result = e.response.status;
+              break;
+            } else {
+              // Being throttled with HTTP/429
+              const retryAfterSeconds = Object.prototype.hasOwnProperty.call(
+                e.response.headers,
+                "retry-after"
+              )
+                ? parseInt(e.response.headers["retry-after"])
+                : 0;
 
-    this.errors.push(
-      `URL not found ${value} while parsing ${Checker.normalizeSlashes(
-        this.getRelativeFilePath(filePath)
-      )} after ${maxIterations} retries`
-    );
-    return false;
+              sleepSeconds = ((i + 1) / maxIterations) * retryAfterSeconds;
+
+              // we aren't ignoring HTTP/429... try again after sleeping
+              this.log(
+                `HTTP/429, request retry after ${retryAfterSeconds}s, sleeping for ${sleepSeconds}s`
+              );
+            }
+          }
+          msleep(100 + sleepSeconds * 1000);
+        } // catch
+      } // for
+    } //else if
+
+    // Normalize result to -1 sentinal if we hit the max retries
+    result = result === undefined ? -1 : result;
+
+    // Save result
+    this.urlCache[value] = result;
+
+    if (result === 200 || (result === 429 && ignoring429)) {
+      // Standard success (or an ignored 429)
+      return true;
+    } else if (result === -1) {
+      // No HTTP error, hit max retries
+      this.errors.push(
+        `URL not found ${value} while parsing ${Checker.normalizeSlashes(
+          this.getRelativeFilePath(filePath)
+        )} after ${maxIterations} retries`
+      );
+      return false;
+    } else {
+      // Standard HTTP error
+      this.errors.push(
+        `URL not found ${value} while parsing ${Checker.normalizeSlashes(
+          this.getRelativeFilePath(filePath)
+        )} (HTTP ${result})`
+      );
+      return false;
+    }
   }
 
   private async ValidateLink(
