@@ -339,7 +339,10 @@ export class Checker {
             Object.prototype.hasOwnProperty.call(e, "response") &&
             e.response !== undefined
           ) {
-            if (result !== 429 || (result === 429 && ignoring429)) {
+            if (
+              e.response.status !== 429 ||
+              (e.response.status === 429 && ignoring429)
+            ) {
               // An actual error (or a 429 we're ignoring), save status and bail
               result = e.response.status;
               break;
