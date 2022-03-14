@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "Block other threads from checking a URL if it's already being checked",
+  "packageName": "unbroken",
+  "email": "jthysell@microsoft.com",
+  "dependentChangeType": "patch"
+}
