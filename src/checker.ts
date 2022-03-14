@@ -7,8 +7,8 @@ import * as util from "util";
 import { OptionDefinition } from "command-line-usage";
 const readdir = util.promisify(fs.readdir);
 
-function msleep(n: number) {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, n);
+async function msleep(n: number) {
+  return new Promise((resolve) => setTimeout(resolve, n));
 }
 
 const DefaultUserAgent = "Chrome/89.0.4346.0";
@@ -308,19 +308,31 @@ export class Checker {
 
   private async ValidateURL(name: string, value: string, filePath: string) {
     const maxIterations = 5;
-    const ignoring429 = this.suppressions.findIndex((x) => x === "HTTP/429") !== -1;
+    const ignoring429 =
+      this.suppressions.findIndex((x) => x === "HTTP/429") !== -1;
+    const relativeFilePath = Checker.normalizeSlashes(
+      this.getRelativeFilePath(filePath)
+    );
 
-    let result: number | undefined = value in this.urlCache ? this.urlCache[value] : undefined;
+    let result: number | undefined =
+      value in this.urlCache ? this.urlCache[value] : undefined;
+
+    // spin while pending validates finish
+    while (result === -1) {
+      await msleep(100);
+      result = this.urlCache[value];
+    }
 
     if (result === 200) {
       // Previous success, bail early
       return true;
     } else if (result === undefined) {
       // No previous result, actually check URL
-
+      this.urlCache[value] = -1; // block other validates until this is finshed
+      this.log(`Verifying ${value} for ${relativeFilePath}`);
       for (let i = 0; i < maxIterations; i++) {
         if (i > 0) {
-          this.log(`Retrying ${value}`);
+          this.log(`Retrying ${value} for ${relativeFilePath}, attempt #${i}`);
         }
 
         try {
@@ -359,14 +371,14 @@ export class Checker {
 
               // we aren't ignoring HTTP/429... try again after sleeping
               this.log(
-                `HTTP/429, request retry after ${retryAfterSeconds}s, sleeping for ${sleepSeconds}s`
+                `HTTP/429 for ${value}, requested retry after ${retryAfterSeconds}s, sleeping for ${sleepSeconds}s`
               );
             }
           }
-          msleep(100 + sleepSeconds * 1000);
+          await msleep(100 + sleepSeconds * 1000);
         } // catch
       } // for
-    } //else if
+    } // else if
 
     // Normalize result to -1 sentinal if we hit the max retries
     result = result === undefined ? -1 : result;
@@ -380,17 +392,13 @@ export class Checker {
     } else if (result === -1) {
       // No HTTP error, hit max retries
       this.errors.push(
-        `URL not found ${value} while parsing ${Checker.normalizeSlashes(
-          this.getRelativeFilePath(filePath)
-        )} after ${maxIterations} retries`
+        `URL not found ${value} while parsing ${relativeFilePath} after ${maxIterations} retries`
       );
       return false;
     } else {
       // Standard HTTP error
       this.errors.push(
-        `URL not found ${value} while parsing ${Checker.normalizeSlashes(
-          this.getRelativeFilePath(filePath)
-        )} (HTTP ${result})`
+        `URL not found ${value} while parsing ${relativeFilePath} (HTTP ${result})`
       );
       return false;
     }
