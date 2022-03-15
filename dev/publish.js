@@ -19,11 +19,11 @@ function main() {
         process.exit(1);
     }
 
-    const upstreamBranch = execSync('git rev-parse --abbrev-ref master@{u}').toString().trim();
+    const upstreamBranch = execSync('git rev-parse --abbrev-ref \'master@{u}\'').toString().trim();
     const remote = upstreamBranch.split('/')[0];
     const remoteUrl = execSync(`git config --get remote.${remote}.url`).toString().trim();
 
-    if (remoteUrl !== 'https://github.com/asklar/unbroken.git') {
+    if (!remoteUrl.startsWith('https://github.com/asklar/unbroken')) {
         console.error(`Error: Upstream is not the official unbroken repository.`);
         process.exit(1);
     }
