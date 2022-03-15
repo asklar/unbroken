@@ -1,17 +1,18 @@
 @echo off
 setlocal
 
-for /f %%i in ('git branch --show-current') do set branch=%%i
+pushd %~dp0\..
 
-if NOT "%branch%"=="master" (
-    echo You must run this script from master. Current branch is %branch%
-    exit /b 1
-)
+call yarn test
+if %ERRORLEVEL% neq 0 goto :exit
 
-call npx bump
-git commit -m "bump package.json" -i package.json
-git push
-call yarn build
-npm publish
+call node %~dp0\publish.js
+if %ERRORLEVEL% neq 0 goto :exit
+
+:exit
+
+popd
+
+exit /b %ERRORLEVEL%
 
 endlocal
