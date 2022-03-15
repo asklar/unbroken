@@ -21,5 +21,5 @@ jobs:
     - run: yarn install
     - run: yarn build
     - run: yarn publish
-        env:
+      env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
