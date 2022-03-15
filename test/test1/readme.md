@@ -19,7 +19,7 @@
   </a>
 </p>
 
-![Hero Image with Logo](./.github/hero2.png)
+![Hero Image with Logo](.github/hero2.png)
 
 [React Native](https://reactnative.dev) enables you to build world-class application experiences on native platforms using a consistent developer experience based on JavaScript and [React](https://reactjs.org/). The focus of React Native is on developer efficiency across all the platforms you care about - learn once, write anywhere. Facebook uses React Native in multiple production apps and will continue investing in React Native.
 

@@ -8,7 +8,7 @@ Although React Native for Windows supports writing modules in both C# and C++, y
 
 That said, we recognize the engineering efficiency that comes with writing a module in C#. We strive to maintain parity in developer experience between C# and C++. If your app or module already uses C# (perhaps because it is migrating from the React Native for Windows legacy platform), you should feel empowered to continue to use C#. That said, modules that Microsoft contributes to will be written in C++ to ensure the highest level of performance. 
 
-- [Desktop\React.Windows.Desktop.vcxproj](#React.Windows.Desktop)
+- [Desktop/React.Windows.Desktop.vcxproj](#React.Windows.Desktop)
 
 ## React.Windows.Desktop
 
