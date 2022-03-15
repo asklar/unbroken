@@ -21,7 +21,7 @@ function main() {
 
     const upstreamBranch = execSync('git rev-parse --abbrev-ref master@{u}').toString().trim();
     const remote = upstreamBranch.split('/')[0];
-    const remoteUrl = execSync(`git config --get remote.${remote}.url`).trim();
+    const remoteUrl = execSync(`git config --get remote.${remote}.url`).toString().trim();
 
     if (remoteUrl !== 'https://github.com/asklar/unbroken.git') {
         console.error(`Error: Upstream is not the official unbroken repository.`);
