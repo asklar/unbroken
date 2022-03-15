@@ -39,7 +39,11 @@ function main() {
   console.log("Bumping the version.");
   execSync("npx bump");
 
-  const version = require("package.json").version.trim();
+  const version = require(path.resolve(
+    __dirname,
+    "..",
+    "package.json"
+  )).version.trim();
 
   console.log(`New version is ${version}.`);
 
