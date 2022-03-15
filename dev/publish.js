@@ -5,6 +5,8 @@ const fs = require("fs");
 const execSync = require("child_process").execSync;
 
 function main() {
+    console.log("publish.js - Start");
+
     const gitStatus = execSync('git status --porcelain=v1').toString();
     if (gitStatus) {
         console.error(`Error: Uncommitted files in the repo.`);
@@ -45,7 +47,7 @@ function main() {
     console.log('Pushing the tag to github.');
     execSync('git push --tags');
 
-    console.log('Complete! Check https://github.com/asklar/unbroken/actions for publish status.');
+    console.log('publish.js - Complete! Check https://github.com/asklar/unbroken/actions for publish status.');
 }
 
 main();
