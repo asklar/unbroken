@@ -25,6 +25,7 @@ function main() {
 
     if (remoteUrl !== 'https://github.com/asklar/unbroken.git') {
         console.error(`Error: Upstream is not the official unbroken repository.`);
+        console.error(`remote url is ${remoteUrl}`);
         process.exit(1);
     }
 
