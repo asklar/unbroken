@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Fix regression from #27",
-  "packageName": "unbroken",
-  "email": "jthysell@microsoft.com",
-  "dependentChangeType": "patch"
-}

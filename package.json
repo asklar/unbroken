@@ -4,7 +4,6 @@
   "description": "Detect broken links in markdown files",
   "main": "./bin/index.js",
   "scripts": {
-    "change": "beachball change",
     "test": "yarn build && yarn tsc -p test && node test/test.js",
     "build": "tsc -p src",
     "lint": "eslint src/**/*.ts test/*.ts"
@@ -32,7 +31,6 @@
     "@types/node": "^14.14.14",
     "@typescript-eslint/eslint-plugin": "^4.10.0",
     "@typescript-eslint/parser": "^4.10.0",
-    "beachball": "^1.23.1",
     "eslint": "7.12.1",
     "eslint-config-prettier": "^7.0.0",
     "eslint-config-standard": "^16.0.2",
