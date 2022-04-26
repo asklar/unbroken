@@ -53,6 +53,8 @@
 
     { "name": "user-agent", "expected": 0, "options": { "dir": "test/userAgent", "superquiet": true} },
 
-    { "name": "throttling", "expected": 0, "options": { "dir": "test/throttling", "local-only": false, "superquiet": true} }
+    { "name": "throttling", "expected": 0, "options": { "dir": "test/throttling", "local-only": false, "superquiet": true} },
+
+    { "name": "br-encoding", "expected": 0, "options": { "dir": "test/brEncoding", "superquiet": true} }
 ]
 }

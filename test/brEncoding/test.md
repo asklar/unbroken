@@ -1,0 +1,1 @@
+Here is a [link to GitHub Docs](https://docs.github.com/actions). GitHub Docs rejects requests without br encoding.
