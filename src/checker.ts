@@ -338,7 +338,10 @@ export class Checker {
         try {
           const userAgent = this.options["user-agent"] || DefaultUserAgent;
           const r = await axios.get(value, {
-            headers: { "User-Agent": userAgent },
+            headers: {
+              "User-Agent": userAgent,
+              "Accept-Encoding": "gzip, deflate, br",
+            },
           });
           if (r.status === 200) {
             // Save success response as result
