@@ -101,6 +101,12 @@ export class Checker {
       description:
         "Whether links to local files are allowed to have line sections like foo.cpp#L12",
     },
+    {
+      name: "allow-403-http-errors",
+      type: Boolean,
+      description:
+        "Whether to ignore HTTP 403 errors. This commonly happens for projects with single signon enabled.",
+    },
     { name: "quiet", alias: "q", type: Boolean },
     { name: "superquiet", alias: "s", type: Boolean },
     {
@@ -310,6 +316,8 @@ export class Checker {
     const maxIterations = 5;
     const ignoring429 =
       this.suppressions.findIndex((x) => x === "HTTP/429") !== -1;
+    const ignoring403 =
+      this.suppressions.findIndex((x) => x === "HTTP/403") !== -1;
     const relativeFilePath = Checker.normalizeSlashes(
       this.getRelativeFilePath(filePath)
     );
@@ -389,8 +397,12 @@ export class Checker {
     // Save result
     this.urlCache[value] = result;
 
-    if (result === 200 || (result === 429 && ignoring429)) {
-      // Standard success (or an ignored 429)
+    if (
+      result === 200 ||
+      (result === 429 && ignoring429) ||
+      (result === 403 && ignoring403)
+    ) {
+      // Standard success (or an ignored 429 or 403)
       return true;
     } else if (result === -1) {
       // No HTTP error, hit max retries

@@ -55,6 +55,8 @@
 
     { "name": "throttling", "expected": 0, "options": { "dir": "test/throttling", "local-only": false, "superquiet": true} },
 
-    { "name": "br-encoding", "expected": 0, "options": { "dir": "test/brEncoding", "superquiet": true} }
+    { "name": "br-encoding", "expected": 0, "options": { "dir": "test/brEncoding", "superquiet": true} },
+
+    { "name": "auth", "expected": 0, "options": { "dir": "test/auth", "superquiet": true} }
 ]
 }
