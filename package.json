@@ -37,7 +37,7 @@
     "micromatch": "^4.0.8"
   },
   "devDependencies": {
-    "@eslint/js": "^9.0.0",
+    "@eslint/js": "^10.0.1",
     "@types/command-line-args": "^5.2.3",
     "@types/command-line-usage": "^5.0.4",
     "@types/micromatch": "^4.0.9",
