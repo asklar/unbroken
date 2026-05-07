@@ -1,17 +1,16 @@
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 import chalk from "chalk";
 import axios from "axios";
 import micromatch from "micromatch";
-import * as util from "util";
 import { OptionDefinition } from "command-line-usage";
-const readdir = util.promisify(fs.readdir);
+const readdir = fs.promises.readdir;
 
 async function msleep(n: number) {
   return new Promise((resolve) => setTimeout(resolve, n));
 }
 
-const DefaultUserAgent = "Chrome/89.0.4346.0";
+const DefaultUserAgent = "Mozilla/5.0 (compatible; unbroken/1.0; +https://github.com/asklar/unbroken)";
 
 export interface Options {
   quiet: boolean;
@@ -53,7 +52,7 @@ export class Checker {
       this.exclusions = contents
         .filter((x) => x.startsWith("!"))
         .map((x) => Checker.normalizeSlashes(path.normalize(x.slice(1))));
-    } catch (e) {
+    } catch {
       this.suppressions = [];
       this.exclusions = [];
     }
@@ -122,7 +121,6 @@ export class Checker {
     callback: { (path: string): Promise<void> }
   ) {
     const files = (await readdir(dirPath)) || [];
-    const checker = this;
     await asyncForEach(
       files,
       async (file: string) => {
@@ -130,15 +128,15 @@ export class Checker {
         const relFilePath = Checker.normalizeSlashes(
           this.getRelativeFilePath(filePath)
         );
-        const shouldSkip = micromatch.isMatch(relFilePath, checker.exclusions, {
+        const shouldSkip = micromatch.isMatch(relFilePath, this.exclusions, {
           nocase: true,
         });
         if (shouldSkip) {
-          checker.log(`Skipping ${Checker.normalizeSlashes(relFilePath)}.`);
+          this.log(`Skipping ${Checker.normalizeSlashes(relFilePath)}.`);
         } else {
           const stat = fs.statSync(filePath);
           if (stat.isDirectory()) {
-            await checker.RecurseFindMarkdownFiles(filePath, callback);
+            await this.RecurseFindMarkdownFiles(filePath, callback);
           } else if (filePath.toLowerCase().endsWith(".md")) {
             await callback(filePath);
           }
@@ -189,7 +187,7 @@ export class Checker {
     return n;
   }
 
-  private log(...args: any) {
+  private log(...args: string[]) {
     if (!this.options.quiet) {
       console.log(args.join(" "));
     }
@@ -202,7 +200,7 @@ export class Checker {
   }
 
   private getRelativeFilePath(filePath: string) {
-    return filePath.substr(this.options.dir.length + 1);
+    return filePath.substring(this.options.dir.length + 1);
   }
 
   private static normalizeSlashes(str: string) {
@@ -348,10 +346,10 @@ export class Checker {
             result = r.status;
             break;
           }
-        } catch (e) {
+        } catch (e: unknown) {
           let sleepSeconds = 0;
           if (
-            Object.prototype.hasOwnProperty.call(e, "response") &&
+            axios.isAxiosError(e) &&
             e.response !== undefined
           ) {
             if (
@@ -363,11 +361,9 @@ export class Checker {
               break;
             } else {
               // Being throttled with HTTP/429
-              const retryAfterSeconds = Object.prototype.hasOwnProperty.call(
-                e.response.headers,
-                "retry-after"
-              )
-                ? parseInt(e.response.headers["retry-after"])
+              const retryAfterHeader = e.response.headers["retry-after"];
+              const retryAfterSeconds = typeof retryAfterHeader === "string"
+                ? parseInt(retryAfterHeader)
                 : 0;
 
               sleepSeconds = ((i + 1) / maxIterations) * retryAfterSeconds;

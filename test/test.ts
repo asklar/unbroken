@@ -1,7 +1,9 @@
-import * as unbroken from "../lib/checker";
-import chalk from "chalk";
-import * as fs from "fs";
-import * as path from "path";
+import * as unbroken from "../lib/checker.js";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { fileURLToPath } from "node:url";
+import { describe, it } from "node:test";
+import assert from "node:assert";
 
 interface TestCase {
   name: string;
@@ -9,61 +11,24 @@ interface TestCase {
   options: unbroken.Options;
 }
 
-function AssertAreEqual(a: any, b: any, testcase: string) {
-  if (a !== b) {
-    console.log(testcase, chalk.redBright(`Expected ${a}, actual ${b}`));
-    throw new Error(`${testcase} - expected ${a}, actual ${b}`);
-  }
-  return true;
-}
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const TestCases = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, "TestCases.json")).toString()
 ).TestCases as TestCase[];
 
-async function Test(option?: string | undefined) {
-  const startTime = Date.now();
-  let errors = 0;
-  let skipped = 0;
-  const testCases =
-    !option || option === "-l"
-      ? TestCases
-      : TestCases.filter((x) => x.name === option);
+const localOnly = process.argv.includes("-l") || process.env.LOCAL_ONLY === "1";
 
-  for (const testcase of testCases) {
-    const checker = new unbroken.Checker(testcase.options);
-    try {
-      if (!process.env.CI) {
-        process.stdout.write(testcase.name + " ");
-        process.stdout.cursorTo(0);
-      }
-      if (option !== "-l" || testcase.options["local-only"]) {
-        const v = await checker.Process();
-        if (AssertAreEqual(testcase.expected, v, testcase.name)) {
-          console.log(testcase.name, chalk.greenBright("ok"));
-        }
-      } else if (option === "-l") {
-        // the test was not local but we are running only local tests
-        console.log(testcase.name, chalk.yellow("skipped"));
-        skipped++;
-      }
-    } catch (e) {
-      console.error(e);
-      errors++;
-    }
+describe("unbroken", () => {
+  for (const testcase of TestCases) {
+    const isNetworkTest = !testcase.options["local-only"];
+    const shouldSkip = localOnly && isNetworkTest;
+
+    it(testcase.name, { skip: shouldSkip }, async () => {
+      const checker = new unbroken.Checker(testcase.options);
+      const v = await checker.Process();
+      assert.strictEqual(v, testcase.expected, `Expected ${testcase.expected} errors, got ${v}`);
+    });
   }
-  console.log(`Finished in ${Date.now() - startTime} ms.`);
-  const pct = `${100 * (1 - errors / (testCases.length - skipped))}%`;
-  console.log(
-    `Total: ${testCases.length}. Skipped: ${skipped}. Passed: ${
-      testCases.length - skipped - errors
-    } (`,
-    errors === 0
-      ? chalk.bgGreen.whiteBright(pct)
-      : chalk.bgRed.whiteBright(pct),
-    ")."
-  );
-  process.exitCode = errors;
-}
-
-Test(process.argv[2]);
+});

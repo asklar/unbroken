@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 import commandLineArgs from "command-line-args";
 import commandLineUsage from "command-line-usage";
-import { Checker, Options } from "./checker";
+import { Checker, Options } from "./checker.js";
 
-import * as fs from "fs";
+import * as fs from "node:fs";
 import chalk from "chalk";
-import path from "path";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 async function unbroken(options: Options) {
   const c = new Checker(options);
@@ -27,6 +28,8 @@ async function Do() {
   ]);
 
   if (options.help) {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
     const version = JSON.parse(
       fs.readFileSync(path.join(__dirname, "../package.json")).toString()
     ).version;

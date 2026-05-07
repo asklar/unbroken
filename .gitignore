@@ -106,4 +106,6 @@ dist
 foo/**
 lib/**
 test/test.js
+test/test.mock-web.js
 test/*.d.ts
+test/mock-web/
