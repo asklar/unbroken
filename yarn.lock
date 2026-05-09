@@ -138,12 +138,12 @@
   dependencies:
     "@types/braces" "*"
 
-"@types/node@^22.0.0":
-  version "22.19.17"
-  resolved "https://registry.npmjs.org/@types/node/-/node-22.19.17.tgz"
-  integrity sha512-wGdMcf+vPYM6jikpS/qhg6WiqSV/OhG+jeeHT/KlVqxYfD40iYJf9/AE1uQxVWFvU7MipKRkRv8NSHiCGgPr8Q==
+"@types/node@^25.6.2":
+  version "25.6.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-25.6.2.tgz#8c491201373690e4ef2a2ffed0dfb510a5830b92"
+  integrity sha512-sokuT28dxf9JT5Kady1fsXOvI4HVpjZa95NKT5y9PNTIrs2AsobR4GFAA90ZG8M+nxVRLysCXsVj6eGC7Vbrlw==
   dependencies:
-    undici-types "~6.21.0"
+    undici-types "~7.19.0"
 
 "@typescript-eslint/eslint-plugin@8.59.2":
   version "8.59.2"
@@ -1067,10 +1067,10 @@ typical@^7.3.0:
   resolved "https://registry.npmjs.org/typical/-/typical-7.3.0.tgz"
   integrity sha512-ya4mg/30vm+DOWfBg4YK3j2WD6TWtRkCbasOJr40CseYENzCUby/7rIvXA99JGsQHeNxLbnXdyLLxKSv3tauFw==
 
-undici-types@~6.21.0:
-  version "6.21.0"
-  resolved "https://registry.npmjs.org/undici-types/-/undici-types-6.21.0.tgz"
-  integrity sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==
+undici-types@~7.19.0:
+  version "7.19.2"
+  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-7.19.2.tgz#1b67fc26d0f157a0cba3a58a5b5c1e2276b8ba2a"
+  integrity sha512-qYVnV5OEm2AW8cJMCpdV20CDyaN3g0AjDlOGf1OW4iaDEx8MwdtChUp4zu4H0VP3nDRF/8RKWH+IPp9uW0YGZg==
 
 uri-js@^4.2.2:
   version "4.4.0"
